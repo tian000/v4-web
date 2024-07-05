@@ -2,11 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useLogin, useLogout, useMfa, useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
 import {
-  WalletType as CosmosWalletType,
   useAccount as useAccountGraz,
-  useSuggestChainAndConnect as useConnectGraz,
   useDisconnect as useDisconnectGraz,
   useOfflineSigners as useOfflineSignersGraz,
+  useSuggestChainAndConnect as useConnectGraz,
+  WalletType as CosmosWalletType,
 } from 'graz';
 import {
   useAccount as useAccountWagmi,
@@ -22,11 +22,12 @@ import { STRING_KEYS } from '@/constants/localization';
 import { WALLETS_CONFIG_MAP } from '@/constants/networks';
 import {
   DYDX_CHAIN_INFO,
-  WalletConnectionType,
-  WalletType,
-  wallets,
   type DydxAddress,
   type EvmAddress,
+  SolAddress,
+  WalletConnectionType,
+  wallets,
+  WalletType,
 } from '@/constants/wallets';
 
 import { useLocalStorage } from '@/hooks/useLocalStorage';
@@ -49,15 +50,22 @@ export const useWalletConnection = () => {
     key: LocalStorageKey.EvmAddress,
     defaultValue: undefined,
   });
+
   const { address: evmAddressWagmi, isConnected: isConnectedWagmi } = useAccountWagmi();
   const publicClientWagmi = usePublicClientWagmi();
   const { data: signerWagmi } = useWalletClientWagmi();
   const { disconnectAsync: disconnectWagmi } = useDisconnectWagmi();
 
+  // SOL wallet connection
+  const [solAddress, saveSolAddress] = useLocalStorage<SolAddress | undefined>({
+    key: LocalStorageKey.SolAddress,
+    defaultValue: undefined,
+  });
+
   useEffect(() => {
     // Cache last connected address
     if (evmAddressWagmi) saveEvmAddress(evmAddressWagmi);
-  }, [evmAddressWagmi]);
+  }, [evmAddressWagmi, saveEvmAddress]);
 
   // Cosmos wallet connection
   const [dydxAddress, saveDydxAddress] = useLocalStorage<DydxAddress | undefined>({
@@ -73,7 +81,7 @@ export const useWalletConnection = () => {
   useEffect(() => {
     // Cache last connected address
     if (dydxAddressGraz) saveDydxAddress(dydxAddressGraz as DydxAddress);
-  }, [dydxAddressGraz]);
+  }, [dydxAddressGraz, saveDydxAddress]);
 
   // Wallet connection
 
@@ -171,6 +179,9 @@ export const useWalletConnection = () => {
           }
         } else if (walletConnection.type === WalletConnectionType.TestWallet) {
           saveEvmAddress(STRING_KEYS.TEST_WALLET as EvmAddress);
+        } else if (walletConnection.type === WalletConnectionType.Phantom) {
+          const resp = await (window as any).phantom.solana.connect();
+          saveSolAddress(resp.publicKey.toBase58());
         } else {
           // if account connected (via remember me), do not show wagmi popup until forceConnect
           if (!isConnectedWagmi && (!!forceConnect || !isAccountConnected)) {
@@ -200,30 +211,54 @@ export const useWalletConnection = () => {
         walletConnectionType: walletConnection?.type,
       };
     },
-    [isConnectedGraz, signerGraz, isConnectedWagmi, signerWagmi, ready, authenticated, login]
+    [
+      walletConnectionType,
+      isConnectedWagmi,
+      ready,
+      authenticated,
+      login,
+      isConnectedGraz,
+      stringGetter,
+      connectGraz,
+      saveEvmAddress,
+      saveSolAddress,
+      connectWagmi,
+      walletConnectConfig,
+    ]
   );
 
   const disconnectWallet = useCallback(async () => {
     saveEvmAddress(undefined);
     saveDydxAddress(undefined);
+    saveSolAddress(undefined);
 
     if (isConnectedWagmi) await disconnectWagmi();
     if (isConnectedGraz) await disconnectGraz();
     if (authenticated) await logout();
-  }, [isConnectedGraz, isConnectedWagmi, authenticated, logout]);
+  }, [
+    saveEvmAddress,
+    saveDydxAddress,
+    saveSolAddress,
+    isConnectedWagmi,
+    disconnectWagmi,
+    isConnectedGraz,
+    disconnectGraz,
+    authenticated,
+    logout,
+  ]);
 
   // Wallet selection
 
   const [selectedWalletType, setSelectedWalletType] = useState<WalletType | undefined>(walletType);
   const [selectedWalletError, setSelectedWalletError] = useState<string>();
 
-  async function disconnectSelectedWallet() {
+  const disconnectSelectedWallet = useCallback(async () => {
     setSelectedWalletType(undefined);
     setWalletType(undefined);
     setWalletConnectionType(undefined);
 
     await disconnectWallet();
-  }
+  }, [disconnectWallet, setWalletConnectionType, setWalletType]);
 
   useEffect(() => {
     (async () => {
@@ -255,7 +290,18 @@ export const useWalletConnection = () => {
         await disconnectSelectedWallet();
       }
     })();
-  }, [selectedWalletType, signerWagmi, signerGraz, evmDerivedAddresses, evmAddress]);
+  }, [
+    selectedWalletType,
+    signerWagmi,
+    signerGraz,
+    evmDerivedAddresses,
+    evmAddress,
+    connectWallet,
+    setWalletType,
+    setWalletConnectionType,
+    stringGetter,
+    disconnectSelectedWallet,
+  ]);
 
   const selectWalletType = async (wType: WalletType | undefined) => {
     if (selectedWalletType) {
@@ -296,6 +342,8 @@ export const useWalletConnection = () => {
         walletType: selectedWalletType,
         forceConnect: true,
       }),
+    // Wallet connection (sol)
+    solAddress,
 
     // Wallet connection (Cosmos)
     dydxAddress,

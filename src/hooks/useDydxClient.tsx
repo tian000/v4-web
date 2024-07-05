@@ -115,7 +115,15 @@ const useDydxClientContext = () => {
         setFaucetClient(undefined);
       }
     })();
-  }, [networkConfig]);
+  }, [
+    chainTokenDecimals,
+    chainTokenDenom,
+    networkConfig,
+    selectedNetwork,
+    usdcDecimals,
+    usdcDenom,
+    usdcGasDenom,
+  ]);
 
   // ------ Gas Denom ------ //
 
@@ -143,7 +151,7 @@ const useDydxClientContext = () => {
   }, [compositeClient, setSelectedGasDenom]);
 
   // ------ Wallet Methods ------ //
-  const getWalletFromEvmSignature = async ({ signature }: { signature: string }) => {
+  const getWalletFromSignature = async ({ signature }: { signature: string }) => {
     const { mnemonic, privateKey, publicKey } =
       onboarding.deriveHDKeyFromEthereumSignature(signature);
 
@@ -321,7 +329,7 @@ const useDydxClientContext = () => {
     selectedGasDenom: gasDenom,
 
     // Wallet Methods
-    getWalletFromEvmSignature,
+    getWalletFromSignature,
 
     // Public Methods
     requestAllPerpetualMarkets,
