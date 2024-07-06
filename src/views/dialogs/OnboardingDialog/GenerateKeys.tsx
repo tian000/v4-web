@@ -42,7 +42,7 @@ export const GenerateKeys = ({ status, setStatus, onKeysDerived = () => {} }: El
   const stringGetter = useStringGetter();
   const [shouldRememberMe, setShouldRememberMe] = useState(false);
 
-  const { setWalletfromSignature, saveEvmSignature, saveSolSignature, walletType } = useAccounts();
+  const { setWalletFromSignature, saveEvmSignature, saveSolSignature, walletType } = useAccounts();
 
   const [error, setError] = useState<string>();
 
@@ -140,7 +140,7 @@ export const GenerateKeys = ({ status, setStatus, onKeysDerived = () => {} }: El
         return;
       }
 
-      await setWalletfromSignature(signature);
+      await setWalletFromSignature(signature);
 
       // 3: Remember me (encrypt and store signature)
       if (shouldRememberMe && staticEncryptionKey) {

@@ -31,6 +31,7 @@ import {
 } from '@/constants/wallets';
 
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { usePhantomWallet } from '@/hooks/usePhantomWallet';
 
 import { getSelectedDydxChainId } from '@/state/appSelectors';
 import { useAppSelector } from '@/state/appTypes';
@@ -56,6 +57,8 @@ export const useWalletConnection = () => {
   const { data: signerWagmi } = useWalletClientWagmi();
   const { disconnectAsync: disconnectWagmi } = useDisconnectWagmi();
 
+  const { solAddress: solAddressPhantom, connect: connectPhantom } = usePhantomWallet();
+
   // SOL wallet connection
   const [solAddress, saveSolAddress] = useLocalStorage<SolAddress | undefined>({
     key: LocalStorageKey.SolAddress,
@@ -63,9 +66,12 @@ export const useWalletConnection = () => {
   });
 
   useEffect(() => {
-    // Cache last connected address
     if (evmAddressWagmi) saveEvmAddress(evmAddressWagmi);
   }, [evmAddressWagmi, saveEvmAddress]);
+
+  useEffect(() => {
+    if (solAddressPhantom) saveSolAddress(solAddressPhantom);
+  }, [solAddressPhantom, saveSolAddress]);
 
   // Cosmos wallet connection
   const [dydxAddress, saveDydxAddress] = useLocalStorage<DydxAddress | undefined>({
@@ -180,8 +186,7 @@ export const useWalletConnection = () => {
         } else if (walletConnection.type === WalletConnectionType.TestWallet) {
           saveEvmAddress(STRING_KEYS.TEST_WALLET as EvmAddress);
         } else if (walletConnection.type === WalletConnectionType.Phantom) {
-          const resp = await (window as any).phantom.solana.connect();
-          saveSolAddress(resp.publicKey.toBase58());
+          await connectPhantom();
         } else {
           // if account connected (via remember me), do not show wagmi popup until forceConnect
           if (!isConnectedWagmi && (!!forceConnect || !isAccountConnected)) {
@@ -221,7 +226,7 @@ export const useWalletConnection = () => {
       stringGetter,
       connectGraz,
       saveEvmAddress,
-      saveSolAddress,
+      connectPhantom,
       connectWagmi,
       walletConnectConfig,
     ]

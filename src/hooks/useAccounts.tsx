@@ -5,7 +5,12 @@ import { LocalWallet, NOBLE_BECH32_PREFIX, type Subaccount } from '@dydxprotocol
 import { usePrivy } from '@privy-io/react-auth';
 import { AES, enc } from 'crypto-js';
 
-import { OnboardingGuard, OnboardingState, SolDerivedAddresses } from '@/constants/account';
+import {
+  EvmDerivedAddresses,
+  OnboardingGuard,
+  OnboardingState,
+  SolDerivedAddresses,
+} from '@/constants/account';
 import { LOCAL_STORAGE_VERSIONS, LocalStorageKey } from '@/constants/localStorage';
 import {
   DydxAddress,
@@ -70,10 +75,12 @@ const useAccountsContext = () => {
 
   const { ready, authenticated } = usePrivy();
 
+  const [previousSolAddress, setPreviousSolAddress] = useState(solAddress);
+
   // EVM → dYdX account derivation
   const [evmDerivedAddresses, saveEvmDerivedAddresses] = useLocalStorage({
     key: LocalStorageKey.EvmDerivedAddresses,
-    defaultValue: { version: 'v2' },
+    defaultValue: { version: 'v2' } as EvmDerivedAddresses,
   });
 
   useEffect(() => {
@@ -122,9 +129,8 @@ const useAccountsContext = () => {
     [evmAddress, evmDerivedAddresses, saveEvmDerivedAddresses]
   );
 
-  // TODO(napas): Handle switching for sol/evm wallets, etc
   useEffect(() => {
-    // Wallet accounts switched
+    // EVM Wallet accounts switched
     if (previousEvmAddress && evmAddress && evmAddress !== previousEvmAddress) {
       // Disconnect local wallet
       disconnectLocalDydxWallet();
@@ -183,6 +189,23 @@ const useAccountsContext = () => {
     },
     [solAddress, solDerivedAddresses, saveSolDerivedAddresses]
   );
+
+  useEffect(() => {
+    // SOL Wallet accounts switched
+    if (previousSolAddress && solAddress && solAddress !== previousSolAddress) {
+      // Disconnect local wallet
+      disconnectLocalDydxWallet();
+
+      // Forget SOL signature
+      forgetSolSignature(previousSolAddress);
+    }
+
+    if (solAddress) {
+      abacusStateManager.setTransfersSourceAddress(solAddress);
+    }
+
+    setPreviousSolAddress(solAddress);
+  }, [solAddress, forgetSolSignature, hasSubAccount, previousSolAddress]);
 
   const decryptSignature = (encryptedSignature: string | undefined) => {
     const staticEncryptionKey = import.meta.env.VITE_PK_ENCRYPTION_KEY;

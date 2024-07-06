@@ -5,6 +5,8 @@ import { useSignTypedData } from 'wagmi';
 
 import { getSignTypedData, WalletType } from '@/constants/wallets';
 
+import { usePhantomWallet } from '@/hooks/usePhantomWallet';
+
 import { getSelectedDydxChainId } from '@/state/appSelectors';
 import { useAppSelector } from '@/state/appTypes';
 
@@ -24,16 +26,16 @@ export default function useSignForWalletDerivation(walletType: WalletType | unde
     },
   });
 
+  const { signMessage: phantomSignMessage } = usePhantomWallet();
+
   const signSolanaMessage = useCallback(async (): Promise<string> => {
-    const resp: { signature: Uint8Array } = await (window as any).phantom.solana.signMessage(
-      new TextEncoder().encode(stableStringify(signTypedData))
-    );
+    const signature = await phantomSignMessage(stableStringify(signTypedData));
     // Left pad the signature with a 0 byte so that the signature is 65 bytes long, a solana signature is 64 bytes by default.
-    return Buffer.from([0, ...resp.signature]).toString('hex');
-  }, [signTypedData]);
+    return Buffer.from([0, ...signature]).toString('hex');
+  }, [phantomSignMessage, signTypedData]);
 
   const signMessage = useCallback(async (): Promise<string> => {
-    if (walletType === 'PHANTOM') {
+    if (walletType === WalletType.Phantom) {
       return signSolanaMessage();
     }
     return signEvmMessage();
