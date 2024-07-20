@@ -18,6 +18,7 @@ import {
   MathWalletIcon,
   MetaMaskIcon,
   OkxWalletIcon,
+  PhantomIcon,
   RainbowIcon,
   TokenPocketIcon,
   TrustWalletIcon,
@@ -284,8 +285,8 @@ export const wallets: Record<WalletType, WalletConfig> = {
   },
   [WalletType.Phantom]: {
     type: WalletType.Phantom,
-    stringKey: STRING_KEYS.WELCOME, // TODO: add key for phantom
-    icon: GenericWalletIcon,
+    stringKey: STRING_KEYS.PHANTOM,
+    icon: PhantomIcon,
     connectionTypes: [WalletConnectionType.Phantom],
   },
 };
