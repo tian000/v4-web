@@ -40,8 +40,8 @@ export const SourceSelectMenu = ({
   onSelect,
 }: ElementProps) => {
   const { walletType } = useAccounts();
-  const { CCTPWithdrawalOnly, CCTPDepositOnly } = useEnvFeatures();
-
+  let { CCTPWithdrawalOnly, CCTPDepositOnly } = useEnvFeatures();
+  CCTPDepositOnly = true;
   const stringGetter = useStringGetter();
   const { type, depositOptions, withdrawalOptions } =
     useAppSelector(getTransferInputs, shallowEqual) ?? {};
@@ -53,7 +53,7 @@ export const SourceSelectMenu = ({
     (type === TransferType.deposit ? depositOptions : withdrawalOptions)?.exchanges?.toArray() ??
     EMPTY_ARR;
 
-  const skipEnabled = useStatsigGateValue(StatSigFlags.ffSkipMigration);
+  const skipEnabled = true; // useStatsigGateValue(StatSigFlags.ffSkipMigration);
 
   const lowestFeeTokensByChainId = useMemo(
     () => getMapOfLowestFeeTokensByChainId(type, skipEnabled),

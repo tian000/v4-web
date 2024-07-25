@@ -34,8 +34,9 @@ export const TokenSelectMenu = ({ selectedToken, onSelectToken, isExchange }: El
   const stringGetter = useStringGetter();
   const { type, depositOptions, withdrawalOptions, resources } =
     useAppSelector(getTransferInputs, shallowEqual) ?? {};
-  const { CCTPWithdrawalOnly, CCTPDepositOnly } = useEnvFeatures();
-  const skipEnabled = useStatsigGateValue(StatSigFlags.ffSkipMigration);
+  let { CCTPWithdrawalOnly, CCTPDepositOnly } = useEnvFeatures();
+  CCTPDepositOnly = true;
+  const skipEnabled = true; // useStatsigGateValue(StatSigFlags.ffSkipMigration);
 
   const lowestFeeTokensByDenom = useMemo(
     () => getMapOfLowestFeeTokensByDenom(type, skipEnabled),
@@ -110,8 +111,8 @@ export const TokenSelectMenu = ({ selectedToken, onSelectToken, isExchange }: El
       <$AssetRow>
         {selectedToken ? (
           <>
-            <$Img src={selectedToken?.iconUrl ?? undefined} alt="" /> {selectedToken?.name}{' '}
-            <Tag>{selectedToken?.symbol}</Tag>
+            <$Img src={selectedToken?.iconUrl ?? undefined} alt="" />
+            {selectedToken?.name} <Tag>{selectedToken?.symbol}</Tag>
           </>
         ) : (
           stringGetter({ key: STRING_KEYS.SELECT_ASSET })

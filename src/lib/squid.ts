@@ -263,7 +263,7 @@ export const fetchTransferStatus = ({
   isCctp,
   requestId,
   baseUrl,
-  useSkip = false,
+  useSkip = true,
 }: {
   transactionId: string;
   toChainId: string | undefined;

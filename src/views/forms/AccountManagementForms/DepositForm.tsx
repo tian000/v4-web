@@ -82,6 +82,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
   const {
     dydxAddress,
     evmAddress,
+    solAddress,
     signerWagmi,
     publicClientWagmi,
     nobleAddress,
@@ -153,6 +154,15 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
       // TODO: this is for fixing a race condition where the sourceAddress is not set in time.
       // worth investigating a better fix on abacus
       abacusStateManager.setTransfersSourceAddress(evmAddress);
+      abacusStateManager.setTransferValue({
+        field: TransferInputField.type,
+        value: TransferType.deposit.rawValue,
+      });
+    }
+    if (dydxAddress && solAddress) {
+      // TODO: this is for fixing a race condition where the sourceAddress is not set in time.
+      // worth investigating a better fix on abacus
+      abacusStateManager.setTransfersSourceAddress(solAddress);
       abacusStateManager.setTransferValue({
         field: TransferInputField.type,
         value: TransferType.deposit.rawValue,

@@ -30,8 +30,8 @@ dependencies:
     specifier: ^0.32.1
     version: 0.32.2
   '@dydxprotocol/v4-abacus':
-    specifier: 1.8.54
-    version: 1.8.54
+    specifier: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.8.30.tgz
+    version: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.8.30.tgz
   '@dydxprotocol/v4-client-js':
     specifier: ^1.1.27
     version: 1.1.27
@@ -3208,13 +3208,6 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
-
-  /@dydxprotocol/v4-abacus@1.8.54:
-    resolution: {integrity: sha512-kG+FMK5mnLo4vhc2jhuofr0WKpfBfzkCWBtrhGaajH/QZTSlbCz60c5JYOjDM32wn0IPTJlC9hghnrg27YeZDA==}
-    dependencies:
-      '@js-joda/core': 3.2.0
-      format-util: 1.0.5
-    dev: false
 
   /@dydxprotocol/v4-client-js@1.1.27:
     resolution: {integrity: sha512-O1XD7G7n/JAxN3sGowVZIkRvY4VjgveEvImhFMNHGYi9UYjFtATxhKcQ+K4v2qrVphW1teyo4PXkcknFvNSadQ==}
@@ -24886,3 +24879,12 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
+
+  file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.8.30.tgz:
+    resolution: {integrity: sha512-p6lRom7VeyqSMjIfmucMp8wWFCjkqByDZ1tssZhJLKKF73sXbH3AvxMoixUkSZaZlgI2nxw/BBB42X5Xgaqedg==, tarball: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.8.30.tgz}
+    name: '@dydxprotocol/v4-abacus'
+    version: 1.8.30
+    dependencies:
+      '@js-joda/core': 3.2.0
+      format-util: 1.0.5
+    dev: false

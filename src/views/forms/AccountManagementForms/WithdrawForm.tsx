@@ -504,7 +504,7 @@ export const WithdrawForm = () => {
     debouncedAmountBN.isZero() ||
     isLoading ||
     isInvalidNobleAddress;
-  const skipEnabled = useStatsigGateValue(StatSigFlags.ffSkipMigration);
+  const skipEnabled = true // useStatsigGateValue(StatSigFlags.ffSkipMigration);
 
   return (
     <$Form onSubmit={onSubmit}>

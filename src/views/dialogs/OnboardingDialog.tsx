@@ -94,7 +94,7 @@ export const OnboardingDialog = ({ setIsOpen }: DialogProps<OnboardingDialogProp
             description: !isMainnet && 'Test funds will be sent directly to your dYdX account.',
             children: (
               <$Content>
-                {isMainnet ? (
+                {isMainnet || true ? (
                   <DepositForm
                     onDeposit={(event) => {
                       track(AnalyticsEvents.TransferDeposit(event ?? {}));

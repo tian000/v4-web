@@ -24,5 +24,16 @@
     "chainId": "42161",
     "tokenAddress": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
     "name": "arbitrum"
+  },
+  {
+    "chainId": "solana-devnet",
+    "tokenAddress": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+    "name": "solana",
+    "isTestnet": true
+  },
+  {
+    "chainId": "solana",
+    "tokenAddress": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "name": "solana"
   }
 ]

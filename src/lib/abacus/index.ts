@@ -451,7 +451,7 @@ class AbacusStateManager {
    */
   setStatsigConfigs = (statsigConfig: { [key in StatSigFlags]?: boolean }) => {
     const { [StatSigFlags.ffSkipMigration]: useSkip = false } = statsigConfig;
-    StatsigConfig.useSkip = useSkip;
+    StatsigConfig.useSkip = true;
   };
 }
 
