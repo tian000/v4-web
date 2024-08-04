@@ -54,6 +54,14 @@ export const useAccountBalance = ({
   queryStatus: any;
   usdcBalance: number;
 } => {
+  // return {
+  //   balance: '999',
+  //   isQueryFetching: false,
+  //   nativeStakingBalance: 999,
+  //   nativeTokenBalance: new BigNumber(999),
+  //   queryStatus: 'success',
+  //   usdcBalance: 999,
+  // };
   const { evmAddress, dydxAddress, solAddress } = useAccounts();
 
   const balances = useAppSelector(getBalances, shallowEqual);
@@ -68,7 +76,7 @@ export const useAccountBalance = ({
     address: evmAddress,
     chainId: typeof chainId === 'number' ? chainId : Number(evmChainId),
     query: {
-      enabled: Boolean(!isCosmosChain && isEVMnativeToken),
+      enabled: Boolean(!isCosmosChain && !isSolanaChain && isEVMnativeToken),
     },
   });
 
@@ -137,7 +145,7 @@ export const useAccountBalance = ({
       ? formatUnits(evmTokenBalance?.result, evmTokenDecimals?.result)
       : undefined;
 
-  const solBalance = solanaToken?.data.formatted;
+  const solBalance = solanaToken?.data?.data.formatted;
 
   const balance = isCosmosChain ? cosmosQuery.data : isSolanaChain ? solBalance : evmBalance;
 
@@ -150,12 +158,22 @@ export const useAccountBalance = ({
   const nativeStakingCoinBalanace = stakingBalances?.[chainTokenDenom];
   const nativeStakingBalance = MustBigNumber(nativeStakingCoinBalanace?.amount).toNumber();
 
-  return {
+  const res = {
     balance,
     nativeTokenBalance,
     nativeStakingBalance,
     usdcBalance,
-    queryStatus: isCosmosChain ? cosmosQuery.status : evmNative.status,
-    isQueryFetching: isCosmosChain ? cosmosQuery.isFetching : evmNative.isFetching,
+    queryStatus: isCosmosChain
+      ? cosmosQuery.status
+      : isSolanaChain
+        ? solanaToken.status
+        : evmNative.status,
+    isQueryFetching: isCosmosChain
+      ? cosmosQuery.isFetching
+      : isSolanaChain
+        ? solanaToken.isFetching
+        : evmNative.isFetching,
   };
+  console.log('useAccountBalance', res);
+  return res;
 };

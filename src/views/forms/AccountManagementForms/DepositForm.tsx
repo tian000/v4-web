@@ -12,6 +12,7 @@ import { TransferInputField, TransferInputTokenResource, TransferType } from '@/
 import { AlertType } from '@/constants/alerts';
 import { AnalyticsEventPayloads, AnalyticsEvents } from '@/constants/analytics';
 import { ButtonSize } from '@/constants/buttons';
+import { cctpTokensByChainId } from '@/constants/cctp';
 import { DialogTypes } from '@/constants/dialogs';
 import { STRING_KEYS } from '@/constants/localization';
 import { isMainnet } from '@/constants/networks';
@@ -103,15 +104,17 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
 
   const {
     requestPayload,
-    token,
+    token: tokenStr,
     exchange,
-    chain: chainIdStr,
+    chain,
     resources,
     summary,
     errors: routeErrors,
     errorMessage: routeErrorMessage,
     isCctp,
   } = useAppSelector(getTransferInputs, shallowEqual) ?? {};
+  let chainIdStr = chain;
+  let token = tokenStr;
   // todo are these guaranteed to be base 10?
   /* eslint-disable radix */
   let chainId: number | string | undefined;
@@ -119,11 +122,18 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
   if (chainIdStr && !Number.isNaN(parseInt(chainIdStr))) chainId = parseInt(chainIdStr);
   /* eslint-enable radix */
 
+  // Override the default selected to be Solana Mainnet for Phantom wallet
+  if (walletType === WalletType.Phantom && chainId === 1) chainId = 'solana';
+  if (walletType === WalletType.Phantom && chainIdStr === '1') chainIdStr = 'solana';
+
+  // Override the default USDC token to be Solana Mainnet for Phantom wallet
+  if (walletType === WalletType.Phantom && token === cctpTokensByChainId['1']?.[0].tokenAddress)
+    token = cctpTokensByChainId.solana?.[0].tokenAddress;
+
   // User inputs
-  const sourceToken = useMemo(
-    () => (token ? resources?.tokenResources?.get(token) : undefined),
-    [token, resources]
-  );
+  const sourceToken = useMemo(() => {
+    return token ? resources?.tokenResources?.get(token) : undefined;
+  }, [token, resources]);
 
   const [fromAmount, setFromAmount] = useState('');
   const [slippage, setSlippage] = useState(isCctp ? 0 : 0.01); // 1% slippage
@@ -155,7 +165,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
     });
 
     setError(null);
-  }, [balanceBN, debouncedAmount, debouncedAmountBN]);
+  }, [debouncedAmountBN.toNumber()]);
 
   useEffect(() => {
     // TODO: this is for fixing a race condition where the sourceAddress is not set in time.
@@ -240,7 +250,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
     if (balance) {
       setFromAmount(balanceBN.toString());
     }
-  }, [balance, balanceBN]);
+  }, [balance, balanceBN.toString()]);
 
   const validateTokenApproval = useCallback(async () => {
     if (!signerWagmi || !publicClientWagmi) throw new Error('Missing signer');
@@ -305,6 +315,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
             throw new Error('Missing solana request payload');
           }
 
+          setDepositStep(DepositSteps.Confirm);
           txHash = await signTransactionPhantom(Buffer.from(requestPayload.data, 'base64'));
         } else {
           if (!signerWagmi) {
@@ -359,35 +370,8 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
         setDepositStep(DepositSteps.Initial);
       }
     },
-    [
-      signerWagmi,
-      walletType,
-      requestPayload?.targetAddress,
-      requestPayload?.data,
-      requestPayload?.value,
-      requestPayload?.gasLimit,
-      requestPayload?.routeType,
-      requestPayload?.requestId,
-      isCctp,
-      hasAcknowledgedTerms,
-      saveHasAcknowledgedTerms,
-      signTransactionPhantom,
-      validateTokenApproval,
-      addOrUpdateTransferNotification,
-      selectedDydxChainId,
-      chainIdStr,
-      summary?.usdcSize,
-      summary?.gasFee,
-      summary?.bridgeFee,
-      summary?.exchangeRate,
-      summary?.estimatedRouteDuration,
-      summary?.toAmount,
-      summary?.toAmountMin,
-      onDeposit,
-      sourceToken?.address,
-      sourceToken?.symbol,
-      slippage,
-    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [requestPayload, signerWagmi, chainId, sourceToken, chainIdStr]
   );
 
   const amountInputReceipt = [
@@ -481,20 +465,16 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
 
     return undefined;
   }, [
-    isCctp,
     error,
     routeErrors,
-    fromAmount,
-    balance,
-    summary?.aggregatePriceImpact,
-    debouncedAmountBN,
-    stringGetter,
-    usdcLabel,
     routeErrorMessage,
-    debouncedAmount,
-    chainIdStr,
-    sourceToken,
+    balance,
     chainId,
+    fromAmount,
+    sourceToken,
+    stringGetter,
+    summary,
+    debouncedAmountBN,
   ]);
 
   const depositCTAString = useMemo(() => {

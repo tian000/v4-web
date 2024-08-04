@@ -51,12 +51,13 @@ type BalanceProps = {
 };
 
 export const useSolanaTokenBalance = ({ address, token }: BalanceProps) => {
+  console.log('address', address, 'token', token);
   const queryFn = async () => {
     try {
       if (!address || !token) {
         throw new Error('Account or token address is not present');
       }
-      const accountOwner = new PublicKey('ob2htHLoCu2P6tX7RrNVtiG1mYTas8NGJEVLaFEUngk');
+      const accountOwner = new PublicKey(address);
       const tokenMint = new PublicKey(token);
       const tokenAccounts = await Connection.getParsedTokenAccountsByOwner(accountOwner, {
         mint: tokenMint,
@@ -73,13 +74,14 @@ export const useSolanaTokenBalance = ({ address, token }: BalanceProps) => {
     }
   };
 
-  const { data } = useQuery({
-    queryKey: ['solanaTokenBalance'],
+  return useQuery({
+    queryKey: ['solanaTokenBalance', address, token],
+    staleTime: 0,
+    gcTime: 0,
     queryFn,
-    enabled: true,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    enabled: !!(address && token),
+    retryOnMount: true,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
-
-  return data;
 };
