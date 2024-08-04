@@ -46,7 +46,6 @@ export const SourceSelectMenu = ({
 }: ElementProps) => {
   const { walletType } = useAccounts();
   const { CCTPWithdrawalOnly, CCTPDepositOnly } = useEnvFeatures();
-
   const stringGetter = useStringGetter();
   const { type, depositOptions, withdrawalOptions } =
     useAppSelector(getTransferInputs, shallowEqual) ?? {};

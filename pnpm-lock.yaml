@@ -30,8 +30,8 @@ dependencies:
     specifier: ^0.32.1
     version: 0.32.2
   '@dydxprotocol/v4-abacus':
-    specifier: 1.8.69
-    version: 1.8.69
+    specifier: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.8.76.tgz
+    version: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.8.76.tgz
   '@dydxprotocol/v4-client-js':
     specifier: ^1.1.27
     version: 1.1.27
@@ -3209,13 +3209,6 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
 
-  /@dydxprotocol/v4-abacus@1.8.69:
-    resolution: {integrity: sha512-qLfzjWmL6SiBq5yDSCsN9vobCqNh6Hpt6qY+dgvkcQdWaYGirsNeZg5MsMVnEMAQ5CW8tNOqoJAa/tcysRlkow==}
-    dependencies:
-      '@js-joda/core': 3.2.0
-      format-util: 1.0.5
-    dev: false
-
   /@dydxprotocol/v4-client-js@1.1.27:
     resolution: {integrity: sha512-O1XD7G7n/JAxN3sGowVZIkRvY4VjgveEvImhFMNHGYi9UYjFtATxhKcQ+K4v2qrVphW1teyo4PXkcknFvNSadQ==}
     dependencies:
@@ -4411,26 +4404,26 @@ packages:
   /@internationalized/date@3.4.0:
     resolution: {integrity: sha512-QUDSGCsvrEVITVf+kv9VSAraAmCgjQmU5CiXtesUBBhBe374NmnEIIaOFBZ72t29dfGMBP0zF+v6toVnbcc6jg==}
     dependencies:
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
     dev: false
 
   /@internationalized/message@3.1.1:
     resolution: {integrity: sha512-ZgHxf5HAPIaR0th+w0RUD62yF6vxitjlprSxmLJ1tam7FOekqRSDELMg4Cr/DdszG5YLsp5BG3FgHgqquQZbqw==}
     dependencies:
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
       intl-messageformat: 10.5.0
     dev: false
 
   /@internationalized/number@3.2.1:
     resolution: {integrity: sha512-hK30sfBlmB1aIe3/OwAPg9Ey0DjjXvHEiGVhNaOiBJl31G0B6wMaX8BN3ibzdlpyRNE9p7X+3EBONmxtJO9Yfg==}
     dependencies:
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
     dev: false
 
   /@internationalized/string@3.1.1:
     resolution: {integrity: sha512-fvSr6YRoVPgONiVIUhgCmIAlifMVCeej/snPZVzbzRPxGpHl3o1GRe+d/qh92D8KhgOciruDUH8I5mjdfdjzfA==}
     dependencies:
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
     dev: false
 
   /@ioredis/commands@1.2.0:
@@ -7135,7 +7128,7 @@ packages:
       '@react-types/checkbox': 3.5.0(react@18.2.0)
       '@react-types/grid': 3.2.0(react@18.2.0)
       '@react-types/shared': 3.19.0(react@18.2.0)
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -7235,7 +7228,7 @@ packages:
   /@react-aria/live-announcer@3.3.1:
     resolution: {integrity: sha512-hsc77U7S16trM86d+peqJCOCQ7/smO1cybgdpOuzXyiwcHQw8RQ4GrXrS37P4Ux/44E9nMZkOwATQRT2aK8+Ew==}
     dependencies:
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
     dev: false
 
   /@react-aria/menu@3.10.1(react-dom@18.2.0)(react@18.2.0):
@@ -7444,7 +7437,7 @@ packages:
       '@react-aria/utils': 3.19.0(react@18.2.0)
       '@react-types/button': 3.7.4(react@18.2.0)
       '@react-types/shared': 3.19.0(react@18.2.0)
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -7562,7 +7555,7 @@ packages:
       '@react-types/checkbox': 3.5.0(react@18.2.0)
       '@react-types/shared': 3.19.0(react@18.2.0)
       '@react-types/switch': 3.4.0(react@18.2.0)
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
       react: 18.2.0
     dev: false
 
@@ -8135,7 +8128,7 @@ packages:
       '@react-types/grid': 3.2.0(react@18.2.0)
       '@react-types/shared': 3.19.0(react@18.2.0)
       '@react-types/table': 3.8.0(react@18.2.0)
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
       react: 18.2.0
     dev: false
 
@@ -8338,7 +8331,7 @@ packages:
     dependencies:
       '@react-aria/utils': 3.19.0(react@18.2.0)
       '@react-types/shared': 3.19.0(react@18.2.0)
-      '@swc/helpers': 0.5.11
+      '@swc/helpers': 0.5.1
       react: 18.2.0
     dev: false
 
@@ -13490,7 +13483,7 @@ packages:
     resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
     requiresBuild: true
     dependencies:
-      node-fetch: 2.7.0(encoding@0.1.13)
+      node-fetch: 2.6.12(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
 
@@ -16938,7 +16931,7 @@ packages:
       merge-options: 3.0.4
       nanoid: 3.3.7
       native-fetch: 3.0.0(node-fetch@2.6.12)
-      node-fetch: 2.6.12
+      node-fetch: 2.6.12(encoding@0.1.13)
       react-native-fetch-api: 3.0.0
       stream-to-it: 0.2.4
     transitivePeerDependencies:
@@ -17372,7 +17365,7 @@ packages:
   /isomorphic-unfetch@3.1.0(encoding@0.1.13):
     resolution: {integrity: sha512-geDJjpoZ8N0kWexiwkX8F9NkTsXhetLPVbZFQ+JTW239QNOwvB0gniuR1Wc6f0AMTn7/mFGyXvHTifrCp/GH8Q==}
     dependencies:
-      node-fetch: 2.7.0(encoding@0.1.13)
+      node-fetch: 2.6.12(encoding@0.1.13)
       unfetch: 4.2.0
     transitivePeerDependencies:
       - encoding
@@ -19627,7 +19620,7 @@ packages:
     peerDependencies:
       node-fetch: '*'
     dependencies:
-      node-fetch: 2.6.12
+      node-fetch: 2.6.12(encoding@0.1.13)
     dev: true
 
   /native-fetch@3.0.0(node-fetch@3.3.2):
@@ -19703,7 +19696,7 @@ packages:
     resolution: {integrity: sha512-IhOigYzAKHd244OC0JIMIUrjzctirCmPkaIfhDeGcEETWof5zKYUW7e7MYvChGWh/4CJeXEgsRyGzuF334rOOQ==}
     dev: false
 
-  /node-fetch@2.6.12:
+  /node-fetch@2.6.12(encoding@0.1.13):
     resolution: {integrity: sha512-C/fGU2E8ToujUivIO0H+tpQ6HWo4eEmchoPIoXtxCrVghxdKq+QOHqEZW7tuP3KlV3bC8FRMO5nMCC7Zm1VP6g==}
     engines: {node: 4.x || >=6.0.0}
     peerDependencies:
@@ -19712,8 +19705,8 @@ packages:
       encoding:
         optional: true
     dependencies:
+      encoding: 0.1.13
       whatwg-url: 5.0.0
-    dev: true
 
   /node-fetch@2.7.0(encoding@0.1.13):
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -19726,6 +19719,7 @@ packages:
     dependencies:
       encoding: 0.1.13
       whatwg-url: 5.0.0
+    dev: false
 
   /node-fetch@3.3.2:
     resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
@@ -20832,7 +20826,7 @@ packages:
       bl: 5.1.0
       debug: 4.3.4(supports-color@5.5.0)
       minimist: 1.2.8
-      node-fetch: 2.7.0(encoding@0.1.13)
+      node-fetch: 2.6.12(encoding@0.1.13)
       readable-stream: 3.6.2
     transitivePeerDependencies:
       - encoding
@@ -24886,3 +24880,12 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
+
+  file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.8.76.tgz:
+    resolution: {integrity: sha512-WOZkkqcQlBfWaTU9H4mcOVCgnpI0m6/2zgAf+nZ5bvbLpAVH11ZXeUEMmP0hd+VkuTmKPu592liH7b2lffJH5g==, tarball: file:../v4-abacus/build/packages/dydxprotocol-v4-abacus-1.8.76.tgz}
+    name: '@dydxprotocol/v4-abacus'
+    version: 1.8.76
+    dependencies:
+      '@js-joda/core': 3.2.0
+      format-util: 1.0.5
+    dev: false

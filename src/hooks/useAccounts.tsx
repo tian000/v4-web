@@ -434,26 +434,26 @@ const useAccountsContext = () => {
     );
   }, [dispatch, dydxSubaccounts]);
 
-  useEffect(() => {
-    if (geo && isBlockedGeo(geo) && checkForGeo) {
-      disconnect();
-    }
-  }, [checkForGeo, geo]);
-
   // Disconnect wallet / accounts
   const disconnectLocalDydxWallet = () => {
     setLocalDydxWallet(undefined);
     setHdKey(undefined);
   };
 
-  const disconnect = async () => {
+  const disconnect = useCallback(async () => {
     // Disconnect local wallet
     disconnectLocalDydxWallet();
 
     // Disconnect EVM wallet
     forgetEvmSignature();
     selectWalletType(undefined);
-  };
+  }, [forgetEvmSignature, selectWalletType]);
+
+  useEffect(() => {
+    if (geo && isBlockedGeo(geo) && checkForGeo) {
+      disconnect();
+    }
+  }, [checkForGeo, disconnect, geo]);
 
   return {
     // Wallet connection

@@ -110,8 +110,8 @@ export const TokenSelectMenu = ({ selectedToken, onSelectToken, isExchange }: El
       <$AssetRow>
         {selectedToken ? (
           <>
-            <$Img src={selectedToken?.iconUrl ?? undefined} alt="" /> {selectedToken?.name}{' '}
-            <Tag>{selectedToken?.symbol}</Tag>
+            <$Img src={selectedToken?.iconUrl ?? undefined} alt="" />
+            {selectedToken?.name} <Tag>{selectedToken?.symbol}</Tag>
           </>
         ) : (
           stringGetter({ key: STRING_KEYS.SELECT_ASSET })

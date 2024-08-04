@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { StargateClient } from '@cosmjs/stargate';
 import { useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 import { shallowEqual } from 'react-redux';
 import { erc20Abi, formatUnits } from 'viem';
 import { useBalance, useReadContracts } from 'wagmi';
@@ -44,7 +45,14 @@ export const useAccountBalance = ({
   decimals = 0,
   rpc,
   isCosmosChain,
-}: UseAccountBalanceProps = {}) => {
+}: UseAccountBalanceProps = {}): {
+  balance: string | undefined;
+  isQueryFetching: any;
+  nativeStakingBalance: number;
+  nativeTokenBalance: BigNumber;
+  queryStatus: any;
+  usdcBalance: number;
+} => {
   const { evmAddress, dydxAddress } = useAccounts();
 
   const balances = useAppSelector(getBalances, shallowEqual);
@@ -100,7 +108,7 @@ export const useAccountBalance = ({
       return formatUnits(BigInt(balanceAsCoin.amount), decimals);
     }
     return undefined;
-  }, [addressOrDenom, chainId, rpc]);
+  }, [addressOrDenom, bech32AddrPrefix, decimals, dydxAddress, rpc]);
 
   const cosmosQuery = useQuery({
     enabled: Boolean(isCosmosChain && dydxAddress && bech32AddrPrefix && rpc && addressOrDenom),

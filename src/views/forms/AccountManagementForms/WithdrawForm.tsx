@@ -113,6 +113,7 @@ export const WithdrawForm = () => {
   const debouncedAmountBN = useMemo(() => MustBigNumber(debouncedAmount), [debouncedAmount]);
   const freeCollateralBN = useMemo(
     () => MustBigNumber(freeCollateral?.current),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [freeCollateral?.current]
   );
 
@@ -154,7 +155,7 @@ export const WithdrawForm = () => {
     };
 
     setTransferValue();
-  }, [debouncedAmountBN]);
+  }, [debouncedAmount, debouncedAmountBN]);
 
   const { screenAddresses } = useDydxClient();
   const { dydxAddress } = useAccounts();
@@ -276,16 +277,28 @@ export const WithdrawForm = () => {
       }
     },
     [
-      requestPayload,
+      requestPayload?.data,
+      requestPayload?.requestId,
       debouncedAmountBN,
-      chainIdStr,
       toAddress,
-      selectedDydxChainId,
-      exchange,
-      toToken,
+      dydxAddress,
+      isCctp,
       screenAddresses,
       stringGetter,
+      exchange,
+      chainIdStr,
+      selectedDydxChainId,
+      sendSquidWithdraw,
       addOrUpdateTransferNotification,
+      toToken?.address,
+      toToken?.symbol,
+      slippage,
+      summary?.gasFee,
+      summary?.bridgeFee,
+      summary?.exchangeRate,
+      summary?.estimatedRouteDuration,
+      summary?.toAmount,
+      summary?.toAmountMin,
     ]
   );
 
@@ -312,7 +325,7 @@ export const WithdrawForm = () => {
       //   fetchRoute({ newAmount: debouncedAmount, newSlippage });
       // }
     },
-    [setSlippage, debouncedAmount]
+    [setSlippage]
   );
 
   const onClickMax = useCallback(() => {
@@ -505,18 +518,25 @@ export const WithdrawForm = () => {
       errorMessage: undefined,
     };
   }, [
+    isCctp,
     error,
-    routeErrors,
-    routeErrorMessage,
-    freeCollateralBN,
-    chainIdStr,
-    debouncedAmountBN,
-    toToken,
     toAddress,
     sanctionedAddresses,
     stringGetter,
-    summary,
+    routeErrors,
+    debouncedAmountBN,
+    freeCollateralBN,
+    summary?.aggregatePriceImpact,
     usdcWithdrawalCapacity,
+    usdcLabel,
+    routeErrorMessage,
+    debouncedAmount,
+    chainIdStr,
+    toToken,
+    exchange,
+    decimalSeparator,
+    groupSeparator,
+    selectedLocale,
   ]);
 
   const isInvalidNobleAddress = Boolean(
