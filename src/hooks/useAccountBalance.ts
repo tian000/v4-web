@@ -16,6 +16,7 @@ import { MustBigNumber } from '@/lib/numbers';
 
 import { useAccounts } from './useAccounts';
 import { useEnvConfig } from './useEnvConfig';
+import { useSolanaTokenBalance } from './useSolanaBalance';
 import { useTokenConfigs } from './useTokenConfigs';
 
 type UseAccountBalanceProps = {
@@ -45,12 +46,13 @@ export const useAccountBalance = ({
   rpc,
   isCosmosChain,
 }: UseAccountBalanceProps = {}) => {
-  const { evmAddress, dydxAddress } = useAccounts();
+  const { evmAddress, dydxAddress, solAddress } = useAccounts();
 
   const balances = useAppSelector(getBalances, shallowEqual);
   const { chainTokenDenom, usdcDenom } = useTokenConfigs();
   const evmChainId = Number(useEnvConfig('ethereumChainId'));
   const stakingBalances = useAppSelector(getStakingBalances, shallowEqual);
+  const isSolanaChain = !!solAddress;
 
   const isEVMnativeToken = addressOrDenom === CHAIN_DEFAULT_TOKEN_ADDRESS;
 
@@ -86,6 +88,9 @@ export const useAccountBalance = ({
     },
   });
 
+  // const solanaNative = useSolanaNativeBalance(solAddress) // May not need this, depends on bridge flow
+  const solanaToken = useSolanaTokenBalance({ address: solAddress, token: addressOrDenom })
+
   const cosmosQueryFn = useCallback(async () => {
     if (dydxAddress && bech32AddrPrefix && rpc && addressOrDenom) {
       const address = convertBech32Address({
@@ -115,6 +120,7 @@ export const useAccountBalance = ({
 
   const { value: evmNativeBalance, decimals: evmNativeDecimals } = evmNative.data ?? {};
   const [evmTokenBalance, evmTokenDecimals] = evmToken.data ?? [];
+
   const evmBalance = isEVMnativeToken
     ? evmNativeBalance !== undefined && evmNativeDecimals !== undefined
       ? formatUnits(evmNativeBalance, evmNativeDecimals)
@@ -122,7 +128,12 @@ export const useAccountBalance = ({
     : evmTokenBalance?.result !== undefined && evmTokenDecimals?.result !== undefined
       ? formatUnits(evmTokenBalance?.result, evmTokenDecimals?.result)
       : undefined;
-  const balance = isCosmosChain ? cosmosQuery.data : evmBalance;
+
+  const solBalance = solanaToken?.data.formatted
+
+  const balance = isCosmosChain ? cosmosQuery.data
+    : isSolanaChain ? solBalance
+      : evmBalance;
 
   const nativeTokenCoinBalance = balances?.[chainTokenDenom];
   const nativeTokenBalance = MustBigNumber(nativeTokenCoinBalance?.amount);
