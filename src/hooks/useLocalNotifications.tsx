@@ -38,7 +38,8 @@ const ERROR_COUNT_THRESHOLD = 3;
 
 const useLocalNotificationsContext = () => {
   const { skip } = useEndpointsConfig();
-  const useSkip = useStatsigGateValue(StatSigFlags.ffSkipMigration);
+  let useSkip = useStatsigGateValue(StatSigFlags.ffSkipMigration);
+  useSkip = true;
 
   const [allTransferNotifications, setAllTransferNotifications] = useLocalStorage<{
     [key: `dydx${string}`]: TransferNotifcation[];
