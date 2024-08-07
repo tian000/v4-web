@@ -51,7 +51,6 @@ type BalanceProps = {
 };
 
 export const useSolanaTokenBalance = ({ address, token }: BalanceProps) => {
-  console.log('address', address, 'token', token);
   const queryFn = async () => {
     try {
       if (!address || !token) {

@@ -174,6 +174,5 @@ export const useAccountBalance = ({
         ? solanaToken.isFetching
         : evmNative.isFetching,
   };
-  console.log('useAccountBalance', res);
   return res;
 };

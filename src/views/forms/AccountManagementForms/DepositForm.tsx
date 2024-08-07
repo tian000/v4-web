@@ -164,6 +164,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
     });
 
     setError(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedAmountBN.toNumber()]);
 
   useEffect(() => {
@@ -255,7 +256,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
     if (balance) {
       setFromAmount(balanceBN.toString());
     }
-  }, [balance, balanceBN.toString()]);
+  }, [balance, balanceBN]);
 
   const validateTokenApproval = useCallback(async () => {
     if (!signerWagmi || !publicClientWagmi) throw new Error('Missing signer');
@@ -470,16 +471,20 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
 
     return undefined;
   }, [
+    isCctp,
     error,
     routeErrors,
-    routeErrorMessage,
-    balance,
-    chainId,
     fromAmount,
-    sourceToken,
-    stringGetter,
-    summary,
+    balance,
+    summary?.aggregatePriceImpact,
     debouncedAmountBN,
+    stringGetter,
+    usdcLabel,
+    routeErrorMessage,
+    debouncedAmount,
+    chainIdStr,
+    sourceToken,
+    chainId,
   ]);
 
   const depositCTAString = useMemo(() => {
