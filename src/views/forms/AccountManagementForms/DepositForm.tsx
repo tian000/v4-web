@@ -12,7 +12,6 @@ import { TransferInputField, TransferInputTokenResource, TransferType } from '@/
 import { AlertType } from '@/constants/alerts';
 import { AnalyticsEventPayloads, AnalyticsEvents } from '@/constants/analytics';
 import { ButtonSize } from '@/constants/buttons';
-import { cctpTokensByChainId } from '@/constants/cctp';
 import { DialogTypes } from '@/constants/dialogs';
 import { STRING_KEYS } from '@/constants/localization';
 import { isMainnet } from '@/constants/networks';
@@ -113,8 +112,8 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
     errorMessage: routeErrorMessage,
     isCctp,
   } = useAppSelector(getTransferInputs, shallowEqual) ?? {};
-  let chainIdStr = chain;
-  let token = tokenStr;
+  const chainIdStr = chain;
+  const token = tokenStr;
   // todo are these guaranteed to be base 10?
   /* eslint-disable radix */
   let chainId: number | string | undefined;
@@ -123,12 +122,12 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
   /* eslint-enable radix */
 
   // Override the default selected to be Solana Mainnet for Phantom wallet
-  if (walletType === WalletType.Phantom && chainId === 1) chainId = 'solana';
-  if (walletType === WalletType.Phantom && chainIdStr === '1') chainIdStr = 'solana';
-
-  // Override the default USDC token to be Solana Mainnet for Phantom wallet
-  if (walletType === WalletType.Phantom && token === cctpTokensByChainId['1']?.[0].tokenAddress)
-    token = cctpTokensByChainId.solana?.[0].tokenAddress;
+  // if (walletType === WalletType.Phantom && chainId === 1) chainId = 'solana';
+  // if (walletType === WalletType.Phantom && chainIdStr === '1') chainIdStr = 'solana';
+  //
+  // // Override the default USDC token to be Solana Mainnet for Phantom wallet
+  // if (walletType === WalletType.Phantom && token === cctpTokensByChainId['1']?.[0].tokenAddress)
+  //   token = cctpTokensByChainId.solana?.[0].tokenAddress;
 
   // User inputs
   const sourceToken = useMemo(() => {
@@ -198,6 +197,12 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
       abacusStateManager.setTransferValue({
         field: TransferInputField.exchange,
         value: 'coinbase',
+      });
+    }
+    if (walletType === WalletType.Phantom) {
+      abacusStateManager.setTransferValue({
+        field: TransferInputField.chain,
+        value: 'solana',
       });
     }
   }, [walletType]);
