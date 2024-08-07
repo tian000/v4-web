@@ -511,7 +511,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
   }
   return (
     <$Form onSubmit={onSubmit}>
-      <$Subheader>
+      <div tw="text-color-text-0">
         {stringGetter({
           key: STRING_KEYS.LOWEST_FEE_DEPOSITS,
           params: {
@@ -524,7 +524,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
             ),
           },
         })}
-      </$Subheader>
+      </div>
       <SourceSelectMenu
         selectedChain={chainIdStr || undefined}
         selectedExchange={exchange || undefined}
@@ -535,7 +535,11 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
       ) : (
         <>
           <TokenSelectMenu selectedToken={sourceToken || undefined} onSelectToken={onSelectToken} />
-          <$WithDetailsReceipt side="bottom" detailItems={amountInputReceipt}>
+          <WithDetailsReceipt
+            side="bottom"
+            detailItems={amountInputReceipt}
+            tw="[--withReceipt-backgroundColor:var(--color-layer-2)]"
+          >
             <FormInput
               type={InputType.Number}
               onChange={onChangeAmount}
@@ -552,7 +556,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
                 />
               }
             />
-          </$WithDetailsReceipt>
+          </WithDetailsReceipt>
           {errorMessage && <AlertMessage type={AlertType.Error}>{errorMessage}</AlertMessage>}
           {requireUserActionInWallet && (
             <AlertMessage type={AlertType.Warning}>
@@ -572,7 +576,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
               setError={setError}
             />
             {!hasAcknowledgedTerms && (
-              <$Terms>
+              <div tw="mt-1 text-color-text-0 font-small-book">
                 {stringGetter({
                   key: STRING_KEYS.DEPOSIT_ACKNOWLEDGEMENT,
                   params: {
@@ -598,7 +602,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
                     ),
                   },
                 })}
-              </$Terms>
+              </div>
             )}
           </$Footer>
         </>
@@ -609,22 +613,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
 const $Form = styled.form`
   ${formMixins.transfersForm}
 `;
-
-const $Subheader = styled.div`
-  color: var(--color-text-0);
-`;
-
 const $Footer = styled.footer`
   ${formMixins.footer}
   --stickyFooterBackdrop-outsetY: var(--dialog-content-paddingBottom);
-`;
-
-const $WithDetailsReceipt = styled(WithDetailsReceipt)`
-  --withReceipt-backgroundColor: var(--color-layer-2);
-`;
-
-const $Terms = styled.div`
-  margin-top: 1rem;
-  color: var(--color-text-0);
-  font: var(--font-small-book);
 `;

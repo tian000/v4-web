@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import styled, { css, keyframes } from 'styled-components';
 
 import { ButtonSize } from '@/constants/buttons';
+import { LocalStorageKey } from '@/constants/localStorage';
 import { STRING_KEYS } from '@/constants/localization';
 import { MarketFilters, type MarketData } from '@/constants/markets';
 import { AppRoute, MarketsRoute } from '@/constants/routes';
 
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useMarketsData } from '@/hooks/useMarketsData';
 import { useParameterizedSelector } from '@/hooks/useParameterizedSelector';
 import { usePotentialMarkets } from '@/hooks/usePotentialMarkets';
@@ -19,6 +21,8 @@ import { popoverMixins } from '@/styles/popoverMixins';
 import { AssetIcon } from '@/components/AssetIcon';
 import { Button } from '@/components/Button';
 import { DropdownIcon } from '@/components/DropdownIcon';
+import { IconName } from '@/components/Icon';
+import { IconButton } from '@/components/IconButton';
 import { Output, OutputType } from '@/components/Output';
 import { Popover, TriggerType } from '@/components/Popover';
 import { ColumnDef, Table } from '@/components/Table';
@@ -29,6 +33,7 @@ import { getMarketMaxLeverage } from '@/state/perpetualsSelectors';
 
 import { calculateMarketMaxLeverage } from '@/lib/marketsHelpers';
 import { MustBigNumber } from '@/lib/numbers';
+import { testFlags } from '@/lib/testFlags';
 
 import { MarketFilter } from './MarketFilter';
 
@@ -85,7 +90,7 @@ const MarketsDropdownContent = ({ onRowAction }: { onRowAction?: (market: Key) =
           getCellValue: (row) => row.priceChange24HPercent,
           label: stringGetter({ key: STRING_KEYS._24H }),
           renderCell: ({ priceChange24HPercent }) => (
-            <$InlineRow>
+            <div tw="inlineRow">
               {!priceChange24HPercent ? (
                 <$Output type={OutputType.Text} value={null} />
               ) : (
@@ -95,7 +100,7 @@ const MarketsDropdownContent = ({ onRowAction }: { onRowAction?: (market: Key) =
                   isNegative={MustBigNumber(priceChange24HPercent).isNegative()}
                 />
               )}
-            </$InlineRow>
+            </div>
           ),
         },
         {
@@ -120,17 +125,40 @@ const MarketsDropdownContent = ({ onRowAction }: { onRowAction?: (market: Key) =
 
   const slotBottom = useMemo(() => {
     if (filter === MarketFilters.PREDICTION_MARKET) {
-      // TODO: (TRA-516): Localize string when finallized.
+      // TODO: (TRA-528): Localize string when finallized.
       return (
-        <$Disclaimer>
+        <div tw="p-1 text-color-text-0 font-small-medium">
           Prediction Markets will settle at $1 if the event occurs as predicted. Otherwise, they
           will settle at $0.
-        </$Disclaimer>
+        </div>
       );
     }
 
     return null;
   }, [filter]);
+
+  const [hasSeenElectionBannerTrumpWin, setHasSeenElectionBannerTrupmWin] = useLocalStorage({
+    key: LocalStorageKey.HasSeenElectionBannerTRUMPWIN,
+    defaultValue: false,
+  });
+
+  const slotTop = useMemo(() => {
+    if (!hasSeenElectionBannerTrumpWin && testFlags.enablePredictionMarketPerp) {
+      // TODO: (TRA-528): Update localization string when copy is finallized
+      return (
+        <$MarketDropdownBanner>
+          <span>🇺🇸 Trade the U.S. presidential election →</span>
+          <IconButton
+            onClick={() => setHasSeenElectionBannerTrupmWin(true)}
+            iconName={IconName.Close}
+            tw="[--button-backgroundColor:transparent] [--button-border:none]"
+          />
+        </$MarketDropdownBanner>
+      );
+    }
+
+    return null;
+  }, [hasSeenElectionBannerTrumpWin]);
 
   return (
     <>
@@ -142,6 +170,7 @@ const MarketsDropdownContent = ({ onRowAction }: { onRowAction?: (market: Key) =
           onSearchTextChange={setSearchFilter}
         />
       </$Toolbar>
+      {slotTop}
       <$ScrollArea>
         <$Table
           withInnerBorders
@@ -351,13 +380,6 @@ const $Popover = styled(Popover)`
     outline: none;
   }
 `;
-
-const $Disclaimer = styled.div`
-  font: var(--font-small-medium);
-  color: var(--color-text-0);
-  padding: 1rem;
-`;
-
 const $Toolbar = styled(Toolbar)`
   ${layoutMixins.stickyHeader}
   height: var(--toolbar-height);
@@ -365,11 +387,20 @@ const $Toolbar = styled(Toolbar)`
   border-bottom: solid var(--border-width) var(--color-border);
 `;
 
+const $MarketDropdownBanner = styled.div`
+  ${layoutMixins.row}
+  background-color: var(--color-layer-1);
+  padding: 0.9063rem 1rem;
+  font: var(--font-base-medium);
+  color: var(--color-text-1);
+  border-bottom: solid var(--border-width) var(--color-border);
+  justify-content: space-between;
+`;
+
 const $ScrollArea = styled.div`
   ${layoutMixins.scrollArea}
   height: calc(100% - var(--toolbar-height));
 `;
-
 const $Table = styled(Table)`
   --tableCell-padding: 0.5rem 1rem;
 
@@ -394,11 +425,6 @@ const $Table = styled(Table)`
     height: var(--popover-item-height);
   }
 ` as typeof Table;
-
-const $InlineRow = styled.div`
-  ${layoutMixins.inlineRow}
-`;
-
 const $Output = styled(Output)<{ isNegative?: boolean }>`
   color: ${({ isNegative }) => (isNegative ? `var(--color-negative)` : `var(--color-positive)`)};
   color: var(--color-text-2);
