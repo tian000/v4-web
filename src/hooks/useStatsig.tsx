@@ -24,6 +24,7 @@ export const StatsigProvider = ({ children }: { children: React.ReactNode }) => 
 
 export const useStatsigGateValue = (gate: StatSigFlags) => {
   const { checkGate } = useStatsigClient();
+  if (gate === StatSigFlags.ffSkipMigration) return true;
   return checkGate(gate);
 };
 

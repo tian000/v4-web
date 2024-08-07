@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { StatSigFlags } from '@/types/statsig';
 import { useQuery } from '@tanstack/react-query';
@@ -38,7 +38,8 @@ const ERROR_COUNT_THRESHOLD = 3;
 
 const useLocalNotificationsContext = () => {
   const { skip } = useEndpointsConfig();
-  const useSkip = useStatsigGateValue(StatSigFlags.ffSkipMigration);
+  let useSkip = useStatsigGateValue(StatSigFlags.ffSkipMigration);
+  useSkip = true;
 
   const [allTransferNotifications, setAllTransferNotifications] = useLocalStorage<{
     [key: `dydx${string}`]: TransferNotifcation[];
@@ -60,11 +61,14 @@ const useLocalNotificationsContext = () => {
         version: LOCAL_STORAGE_VERSIONS[LocalStorageKey.TransferNotifications],
       });
     }
-  }, [allTransferNotifications]);
+  }, [allTransferNotifications, setAllTransferNotifications]);
 
   const { dydxAddress } = useAccounts();
 
-  const transferNotifications = dydxAddress ? allTransferNotifications[dydxAddress] || [] : [];
+  const transferNotifications = useMemo(
+    () => (dydxAddress ? allTransferNotifications[dydxAddress] || [] : []),
+    [allTransferNotifications, dydxAddress]
+  );
 
   const setTransferNotifications = useCallback(
     (notifications: TransferNotifcation[]) => {
@@ -80,7 +84,7 @@ const useLocalNotificationsContext = () => {
         return updatedNotifications;
       });
     },
-    [setAllTransferNotifications, dydxAddress, allTransferNotifications]
+    [setAllTransferNotifications, dydxAddress]
   );
 
   useEffect(() => {
@@ -93,7 +97,7 @@ const useLocalNotificationsContext = () => {
       );
       return updatedNotifications;
     });
-  }, [dydxAddress]);
+  }, [dydxAddress, setAllTransferNotifications]);
 
   const addOrUpdateTransferNotification = useCallback(
     (notification: TransferNotifcation) => {

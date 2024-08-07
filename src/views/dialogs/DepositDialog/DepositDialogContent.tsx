@@ -37,7 +37,7 @@ export const DepositDialogContent = ({ onDeposit }: ElementProps) => {
 
   return (
     <$Content>
-      {isMainnet || !showFaucet ? (
+      {isMainnet || !showFaucet || true ? (
         <DepositForm
           onDeposit={(event) => {
             track(AnalyticsEvents.TransferDeposit(event ?? {}));

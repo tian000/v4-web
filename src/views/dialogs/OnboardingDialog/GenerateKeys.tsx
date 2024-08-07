@@ -94,7 +94,7 @@ export const GenerateKeys = ({ status, setStatus, onKeysDerived = () => {} }: El
 
   const signMessageAsync = useSignForWalletDerivation(walletType);
 
-  const staticEncryptionKey = import.meta.env.VITE_PK_ENCRYPTION_KEY;
+  const staticEncryptionKey = '123123123';
 
   const deriveKeys = async () => {
     setError(undefined);

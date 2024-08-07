@@ -207,7 +207,7 @@ const useAccountsContext = () => {
   }, [solAddress, forgetSolSignature, hasSubAccount, previousSolAddress]);
 
   const decryptSignature = (encryptedSignature: string | undefined) => {
-    const staticEncryptionKey = import.meta.env.VITE_PK_ENCRYPTION_KEY;
+    const staticEncryptionKey = '123123123';
 
     if (!staticEncryptionKey) throw new Error('No decryption key found');
     if (!encryptedSignature) throw new Error('No signature found');
@@ -434,26 +434,26 @@ const useAccountsContext = () => {
     );
   }, [dispatch, dydxSubaccounts]);
 
-  useEffect(() => {
-    if (geo && isBlockedGeo(geo) && checkForGeo) {
-      disconnect();
-    }
-  }, [checkForGeo, geo]);
-
   // Disconnect wallet / accounts
   const disconnectLocalDydxWallet = () => {
     setLocalDydxWallet(undefined);
     setHdKey(undefined);
   };
 
-  const disconnect = async () => {
+  const disconnect = useCallback(async () => {
     // Disconnect local wallet
     disconnectLocalDydxWallet();
 
     // Disconnect EVM wallet
     forgetEvmSignature();
     selectWalletType(undefined);
-  };
+  }, [forgetEvmSignature, selectWalletType]);
+
+  useEffect(() => {
+    if (geo && isBlockedGeo(geo) && checkForGeo) {
+      disconnect();
+    }
+  }, [checkForGeo, disconnect, geo]);
 
   return {
     // Wallet connection
