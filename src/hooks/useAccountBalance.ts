@@ -54,14 +54,6 @@ export const useAccountBalance = ({
   queryStatus: any;
   usdcBalance: number;
 } => {
-  // return {
-  //   balance: '999',
-  //   isQueryFetching: false,
-  //   nativeStakingBalance: 999,
-  //   nativeTokenBalance: new BigNumber(999),
-  //   queryStatus: 'success',
-  //   usdcBalance: 999,
-  // };
   const { evmAddress, dydxAddress, solAddress } = useAccounts();
 
   const balances = useAppSelector(getBalances, shallowEqual);

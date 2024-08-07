@@ -121,14 +121,6 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
   if (chainIdStr && !Number.isNaN(parseInt(chainIdStr))) chainId = parseInt(chainIdStr);
   /* eslint-enable radix */
 
-  // Override the default selected to be Solana Mainnet for Phantom wallet
-  // if (walletType === WalletType.Phantom && chainId === 1) chainId = 'solana';
-  // if (walletType === WalletType.Phantom && chainIdStr === '1') chainIdStr = 'solana';
-  //
-  // // Override the default USDC token to be Solana Mainnet for Phantom wallet
-  // if (walletType === WalletType.Phantom && token === cctpTokensByChainId['1']?.[0].tokenAddress)
-  //   token = cctpTokensByChainId.solana?.[0].tokenAddress;
-
   // User inputs
   const sourceToken = useMemo(() => {
     return token ? resources?.tokenResources?.get(token) : undefined;
@@ -377,7 +369,7 @@ export const DepositForm = ({ onDeposit, onError }: DepositFormProps) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [requestPayload, signerWagmi, chainId, sourceToken, chainIdStr]
+    [requestPayload, signerWagmi, signTransactionPhantom, chainId, sourceToken, chainIdStr]
   );
 
   const amountInputReceipt = [

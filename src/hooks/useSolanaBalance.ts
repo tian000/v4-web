@@ -1,48 +1,7 @@
 import { PublicKey } from '@solana/web3.js';
-import { QueryFunction, useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
-import { Connection } from '@/lib/connection';
-
-type SolanaBalanceResult = {
-  formatted: number;
-  amount: number;
-  decimals: number;
-};
-
-// TODO: Consolidate into one hook, if no token mint provided perhaps assume native balance.
-
-export const useSolanaNativeBalance = (
-  address: string | undefined
-): SolanaBalanceResult | undefined => {
-  const queryFn: QueryFunction<SolanaBalanceResult> = async () => {
-    try {
-      if (!address) {
-        throw new Error('Account public key is undefined');
-      }
-      const publicKey = new PublicKey(address);
-      const lamports = await Connection.getBalance(publicKey);
-
-      // Convert lamports to SOL
-      return {
-        formatted: lamports / 1e9,
-        amount: lamports,
-        decimals: 9,
-      };
-    } catch (error) {
-      throw new Error(`Failed to fetch Solana balance: ${error.message}`);
-    }
-  };
-
-  const { data } = useQuery<SolanaBalanceResult, Error>({
-    queryKey: ['solanaNativeBalance', address],
-    queryFn,
-    enabled: !!address,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  return data;
-};
+import { useSolanaConnection } from '@/hooks/useSolanaConnection';
 
 type BalanceProps = {
   address: string | undefined;
@@ -51,6 +10,8 @@ type BalanceProps = {
 };
 
 export const useSolanaTokenBalance = ({ address, token }: BalanceProps) => {
+  const connection = useSolanaConnection();
+
   const queryFn = async () => {
     try {
       if (!address || !token) {
@@ -58,7 +19,7 @@ export const useSolanaTokenBalance = ({ address, token }: BalanceProps) => {
       }
       const accountOwner = new PublicKey(address);
       const tokenMint = new PublicKey(token);
-      const tokenAccounts = await Connection.getParsedTokenAccountsByOwner(accountOwner, {
+      const tokenAccounts = await connection.getParsedTokenAccountsByOwner(accountOwner, {
         mint: tokenMint,
       });
       return {
